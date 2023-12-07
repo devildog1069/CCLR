@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+       <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script>
+      /**
+       * @license
+       * Copyright 2019 Google LLC. All Rights Reserved.
+       * SPDX-License-Identifier: Apache-2.0
+       */
+      const parcel_lat = {{ pr['LATITUDE']['value'] }};
+      const parcel_log = {{ pr['LONGITUDE']['value'] }};
+      function initMap(callback) {
+        const parcel_location = { lat: parcel_lat, lng: parcel_log };
+        const map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 19,
+          center: parcel_location,
+        });
+        const contentString =
+          '<div id="content">' +
+          '<div id="siteNotice">' +
+          "</div>" +
+          '<h2 id="firstHeading" class="firstHeading">{{ pr_address }}</h2>' +
+          '<div id="bodyContent">' +
+          "<p>Year Built: {{ pr_res1['eyrbuilt']['value'] }}</p>" +
+          "</div>" +
+          "</div>";
+        const infowindow = new google.maps.InfoWindow({
+          content: contentString,
+          ariaLabel: "Parcel Number {{ pn }}",
+        });
+        const marker = new google.maps.Marker({
+          position: parcel_location,
+          map,
+          title: "Parcel Number {{ pn }}",
+        });
+        marker.addListener("click", () => {
+            infowindow.open({
+                anchor: marker,
+                map,
+            });
+        });
+      }
+
+      window.initMap = initMap;
+    </script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <title>Cuyahoga Land Bank Coding Test</title>
+</head>
+<body>
+  <div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        <span class="fs-4">Cuyahoga Land Bank Coding Test</span>
+      </a>
+
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+      </ul>
+    </header>
+  </div>
+  <div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+      <p class="display-3">{{ pr_address }}</p>
+  </div>
+  <div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+<div class="card" style="width: 48rem;">
+    <img class="card-img-top" src="/static/images/{{ pn+'_main_pic.JPG' }}" alt="Photo of {{ pr['number']['value']+' '+pr['street']['value'].title()+' '+pr['neighbor']['value']+', OH '+pr['zip']['value'] }}">
+    <div class="card-body">
+        <h3 class="card-title">Parcel Details for {{ pn }}</h3>
+        <p class="card-text">Interested in this property?
+
+All offers received for any property are subject to being held for review for up to 45 days, at the Cuyahoga Land Bank's discretion.
+Once an offer is accepted, all interested parties will be notified with the decision. The 45 day timeline does not begin until a property has the status.</p>
+
+        <div class="table-responsive ">
+            <h4>Property Specifics:</h4>
+            <table class="table table-striped table-sm">
+                 <tbody>
+                    <tr><td>Address</td><td>{{ pr_address }}</td></tr>
+                    <tr><td>Owner</td><td>{{ pr['towner']['value'].title() }} </td></tr>
+                    <tr><td>Year Built</td><td>{{ pr_res1['eyrbuilt']['value'] }}</td></tr>
+                    <tr><td>Stories</td><td>{{ pr_res1['rnumstor']['value'] }}</td></tr>
+                    <tr><td>Rooms</td><td>{{ pr_res1['rooms']['value'] }}</td></tr>
+                    <tr><td>Bed Rooms</td><td>{{ pr_res1['bedrooms']['value'] }}</td></tr>
+                    <tr><td>Bathrooms</td><td>{{ pr_res1['baths']['value'] }}</td></tr>
+                    <tr><td>Half Baths</td><td>{{ pr_res1['halfbath']['value'] }}</td></tr>
+                    <tr><td title="{{ pr_res1['heat']['description'] }}">Heating</td><td>{{ pr_res1['heat']['value'] }}</td></tr>
+                    <tr><td title="{{ pr_res1['air']['description'] }}">A/C</td><td>{{ pr_res1['air']['value'] }}</td></tr>
+                    <tr><td title="{{ pr_res1['roofmat']['description'] }}">Roof</td><td>{{ pr_res1['roofmat']['value'] }}</td></tr>
+                    <tr><td title="{{ pr_res1['rbasetyp']['description'] }}">Basement</td><td>{{ pr_res1['rbasetyp']['value'] }}</td></tr>
+                    <tr><td title="{{ pr_res1['gartype']['description'] }}">Garage</td><td>{{ pr_res1['gartype']['value'] }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div>
+    <div id="map" style="height: 600px;width: 600px;" ></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ apikey }}&callback=initMap&v=weekly" defer></script>
+</div>
+  </div>
+</body>
+<script src="/static/js/bootstrap.js"></script>
+</html>

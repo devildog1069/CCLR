@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <title>Cuyahoga Land Bank Coding Test</title>
+</head>
+<body>
+  <div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        <span class="fs-4">Cuyahoga Land Bank Coding Test</span>
+      </a>
+    </header>
+  </div>
+<div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+    <div class="card" style="width: 36rem;">
+        <div class="card-body">
+            <h5 class="card-title">Parcel Details.</h5>
+            <p class="card-text">Sample data parcel numbers are listed to the right. Navigating to each parcel number displays a photo, details about the property and a google maps page for navigaion.</p>
+        </div>
+    </div>
+    <div class="list-group gap-2">
+       <a  class="btn btn-primary rounded-pill px-3" href="/parceldetails/109-02-088">109-02-088</a>
+       <a  class="btn btn-primary rounded-pill px-3" href="/parceldetails/136-18-117">136-18-117</a>
+       <a  class="btn btn-primary rounded-pill px-3" href="/parceldetails/109-21-100">109-21-100</a>
+       <a  class="btn btn-primary rounded-pill px-3" href="/parceldetails/672-06-054">672-06-054</a>
+       <a  class="btn btn-primary rounded-pill px-3" href="/parceldetails/673-12-062">673-12-062</a>
+    </div>
+    <div class="px-3"></div>
+        <div class="card" style="width: 36rem;">
+        <div class="card-body">
+            <h5 class="card-title">Parcel Data as JSON.</h5>
+            <p class="card-text">Sample data parcel numbers are listed to the right. Navigating to each parcel number displays the XML parcel data converted to JSON and formatted for readability.</p>
+        </div>
+    </div>
+
+        <div class="list-group gap-2">
+        <a  class="btn btn-info rounded-pill px-3" href="/parceljson/109-02-088">109-02-088</a>
+        <a  class="btn btn-info rounded-pill px-3" href="/parceljson/136-18-117">136-18-117</a>
+        <a  class="btn btn-info rounded-pill px-3" href="/parceljson/109-21-100">109-21-100</a>
+        <a  class="btn btn-info rounded-pill px-3" href="/parceljson/672-06-054">672-06-054</a>
+        <a  class="btn btn-info rounded-pill px-3" href="/parceljson/673-12-062">673-12-062</a>
+    </div>
+
+</div>
+</body>
+<script src="/static/js/bootstrap.js"></script>
+</html>

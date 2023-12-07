@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <meta http-equiv="Cross-Origin-Resource-Policy" content="cross-origin" />
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+       <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script>
+      let parcel;
+      let parcel_lat = 41.446395;
+      let parcel_log = -81.606791;
+      let eyrbuilt = '';
+      let streetaddress = '';
+      let parcel_number = '';
+      async function pullParcel(pn) {
+          const response = await fetch("http://127.0.0.1:5000/parceljson/"+pn);
+          const parceljson = await response.json();
+          //console.log(parceljson);
+          parcel = parceljson;
+          parcel_number = parcel.lbstream.parcelid.id;
+          parcel_lat = parseFloat(parcel.lbstream.parcelid.source[0].record.LATITUDE.value);
+          parcel_log = parseFloat(parcel.lbstream.parcelid.source[0].record.LONGITUDE.value)
+          eyrbuilt = parcel.lbstream.parcelid.source[1].record.eyrbuilt.value;
+          streetaddress = parcel.lbstream.parcelid.source[0].record.number.value+" "+parcel.lbstream.parcelid.source[0].record.street.value;
+          initMap();
+          populateParcel();
+          spinner.style.opacity = '0';
+            setTimeout(()=>{
+                spinner.style.display = 'none';
+            },500)
+      }
+      /**
+       * @license
+       * Copyright 2019 Google LLC. All Rights Reserved.
+       * SPDX-License-Identifier: Apache-2.0
+       */
+      function initMap(callback) {
+        const parcel_location = { lat: parcel_lat, lng: parcel_log };
+        const map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 19,
+          center: parcel_location,
+        });
+        const contentString =
+          '<div id="content">' +
+          '<div id="siteNotice">' +
+          "</div>" +
+          '<h2 id="firstHeading" class="firstHeading">'+ streetaddress +'</h2>' +
+          '<div id="bodyContent">' +
+          "<p>Year Built: "+eyrbuilt+"</p>" +
+          "</div>" +
+          "</div>";
+        const infowindow = new google.maps.InfoWindow({
+          content: contentString,
+          ariaLabel: "Parcel Number " + parcel_number,
+        });
+        const marker = new google.maps.Marker({
+          position: parcel_location,
+          map,
+          title: "Parcel Number "+parcel_number,
+        });
+        marker.addListener("click", () => {
+            infowindow.open({
+                anchor: marker,
+                map,
+            });
+        });
+      }
+    function populateParcel(){
+        document.querySelector('.parcel_number').innerText = parcel.lbstream.parcelid.id;
+        document.querySelector('.parcel_fulladdress').innerText = parcel.lbstream.parcelid.source[0].record.number.value+" "+
+              parcel.lbstream.parcelid.source[0].record.street.value+", "+
+              parcel.lbstream.parcelid.source[0].record.neighbor.value+", OH "+
+              parcel.lbstream.parcelid.source[0].record.zip.value;
+        document.querySelector('#parcelJPG').src = '/static/images/'+parcel.lbstream.parcelid.id+'_main_pic.JPG';
+        document.querySelector('#parcelJPG').alt = 'Photo of '+
+              parcel.lbstream.parcelid.source[0].record.number.value+" "+
+              parcel.lbstream.parcelid.source[0].record.street.value+", "+
+              parcel.lbstream.parcelid.source[0].record.neighbor.value+", OH "+
+              parcel.lbstream.parcelid.source[0].record.zip.value;
+        document.querySelector('.parcel_address').innerText =  parcel.lbstream.parcelid.source[0].record.number.value+" "+parcel.lbstream.parcelid.source[0].record.street.value;
+        document.querySelector('.parcel_towner').innerText =   parcel.lbstream.parcelid.source[0].record.towner.value;
+        document.querySelector('.parcel_eyrbuilt').innerText = parcel.lbstream.parcelid.source[1].record.eyrbuilt.value;
+        document.querySelector('.parcel_stories').innerText =  parcel.lbstream.parcelid.source[1].record.rnumstor.value;
+        document.querySelector('.parcel_rooms').innerText =    parcel.lbstream.parcelid.source[1].record.rooms.value;
+        document.querySelector('.parcel_bedrooms').innerText = parcel.lbstream.parcelid.source[1].record.bedrooms.value;
+
+        document.querySelector('.parcel_baths').innerText =    parcel.lbstream.parcelid.source[1].record.baths.value;
+        document.querySelector('.parcel_halfbath').innerText = parcel.lbstream.parcelid.source[1].record.halfbath.value;
+        document.querySelector('.parcel_heat').innerText =     parcel.lbstream.parcelid.source[1].record.heat.value;
+        document.querySelector('.parcel_air').innerText =      parcel.lbstream.parcelid.source[1].record.air.value;
+        document.querySelector('.parcel_roofmat').innerText =  parcel.lbstream.parcelid.source[1].record.roofmat.value;
+        document.querySelector('.parcel_rbasetyp').innerText = parcel.lbstream.parcelid.source[1].record.rbasetyp.value;
+        document.querySelector('.parcel_gartype').innerText =  parcel.lbstream.parcelid.source[1].record.gartype.value;
+
+      }
+    //window.initMap = initMap;
+  </script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <style>
+        .spinner-wrapper {
+            background-color: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.0s;
+        }
+        .spinner-border {
+            height: 100px;
+            width: 100px;
+        }
+    </style>
+    <title>Cuyahoga Land Bank Coding Test</title>
+</head>
+<body>
+<div class="spinner-wrapper">
+    <div class="spinner-border text-secondary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+  <div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        <span class="fs-4">Cuyahoga Land Bank Coding Test</span>
+      </a>
+
+<!--      <ul class="nav nav-pills">-->
+<!--        <li class="nav-item"><a href="/" class="nav-link">Home</a></li>-->
+<!--      </ul>-->
+    </header>
+  </div>
+  <div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+      <a class="btn btn-primary rounded-pill px-3" onclick="pullParcel('109-02-088');spinner.style.display = '';spinner.style.opacity = '1';" href="#">109-02-088</a>
+      <a class="btn btn-primary rounded-pill px-3" onclick="pullParcel('136-18-117');spinner.style.display = '';spinner.style.opacity = '1';" href="#">136-18-117</a>
+      <a class="btn btn-primary rounded-pill px-3" onclick="pullParcel('109-21-100');spinner.style.display = '';spinner.style.opacity = '1';" href="#">109-21-100</a>
+      <a class="btn btn-primary rounded-pill px-3" onclick="pullParcel('672-06-054');spinner.style.display = '';spinner.style.opacity = '1';" href="#">672-06-054</a>
+      <a class="btn btn-primary rounded-pill px-3" onclick="pullParcel('673-12-062');spinner.style.display = '';spinner.style.opacity = '1';" href="#">673-12-062</a>
+  </div>
+  <div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+      <p class="display-3 parcel_fulladdress"></p>
+  </div>
+  <div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+<div class="card" style="width: 48rem;">
+    <img id="parcelJPG" class="card-img-top" src="" alt="">
+    <div class="card-body">
+        <h3 class="card-title">Details for Parcel <span class="parcel_number"></span></h3>
+        <p class="card-text">Interested in this property?
+
+All offers received for any property are subject to being held for review for up to 45 days, at the Cuyahoga Land Bank's discretion.
+Once an offer is accepted, all interested parties will be notified with the decision. The 45 day timeline does not begin until a property has the status.</p>
+
+        <div class="table-responsive ">
+            <h4>Property Specifics:</h4>
+            <table class="table table-striped table-sm">
+                 <tbody>
+                    <tr><td>Address</td><td class="parcel_address"></td></tr>
+                    <tr><td>Owner</td><td class="parcel_towner"></td></tr>
+                    <tr><td>Year Built</td><td class="parcel_eyrbuilt"></td></tr>
+                    <tr><td>Stories</td><td class="parcel_stories"></td></tr>
+                    <tr><td>Rooms</td><td class="parcel_rooms"></td></tr>
+                    <tr><td>Bed Rooms</td><td class="parcel_bedrooms"></td></tr>
+                    <tr><td>Bathrooms</td><td class="parcel_baths"></td></tr>
+                    <tr><td>Half Baths</td><td class="parcel_halfbath"></td></tr>
+                    <tr><td>Heating</td><td class="parcel_heat"></td></tr>
+                    <tr><td>A/C</td><td class="parcel_air"></td></tr>
+                    <tr><td>Roof</td><td class="parcel_roofmat"></td></tr>
+                    <tr><td>Basement</td><td class="parcel_rbasetyp"></td></tr>
+                    <tr><td>Garage</td><td class="parcel_gartype"></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div>
+    <div id="map" style="height: 600px;width: 600px;" ></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=[APIKEY]&callback=initMap&v=weekly" defer></script>
+</div>
+  </div>
+</body>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", (e) => {pullParcel('109-02-088');});
+    const spinner = document.querySelector('.spinner-wrapper');
+    window.addEventListener('load', () => {
+        //pullParcel('109-02-088');
+        spinner.style.opacity = '0';
+        setTimeout(()=>{
+            spinner.style.display = 'none';
+        },4000)
+    });
+</script>
+</html>
